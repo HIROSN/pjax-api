@@ -1,0 +1,62 @@
+language: node_js
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    sudo: required
+    node_js: 10
+  - os: osx
+    node_js: 10
+addons:
+  chrome: stable
+  firefox: latest
+before_install:
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CHROME_BIN=google-chrome-stable; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export DISPLAY=:99.0; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
+script:
+- travis_retry npm run ci
+before_deploy:
+- sed -i 's/"private":\ true/"private":\ false/' package.json
+- sed -i -E 's/^dist\/?.*$//' .gitignore
+deploy:
+  provider: npm
+  email:
+    secure: "ZLEGnYL6GYBbb4NyU+zd2RCZdPUdoCUMwjtRQgVCGHsS79FVQpmKmIjMzQiVPSYw0l0QN6vsr8W1aLsaPPuD/vSyc4jr2tSFzi4Qyul2SDH4KAlYHFi1Gq98z1oKbD+wM4tkPm016Kfk3y8fBGVbLFXsFzaPlshmYUUpfs/bTXs8b8/JLEEunJ4lcfn358+3t1xyAPsmC728bRQ8OxXpRTk2ij0RGE62cv8vjJRXQWVcnIjE9IAAInsg1mI0XXutWcAk343ZCLXnJsnsz3yYK6XJuRoXoG80LpCmIPS0G20aYoBpcABje4FhKIwPMIcIPUPfYb0rUZLhFz43EjWaEXfu379eBrsX4h5TT3VdLVszXFLIk31RXoMezZaVb9+ImdfUrsK6e74HfkA1slqAv0z1L7G7M/8U0Z2VXsO8UYhFghHEsV84l8SHABRKEx3Iz2hWkHmCQKWaynBPOJROhw8gucar5iHOqeUlCcw532+6nSHBxrq2xLOQVicrjpWYGiAO8lW7lSqH4/07h60wg+6FLCet7lOATdqALUtUsUbHwwnRDOH+HdF4uQAzkQoc2eAzM8Wsc+/LQXwNw0qi2TP+jOeimxrKdp9dBWFk5eww3SHQd5zUKMBHjE++fDQixzJFYkwCcyKrogRRTEjoT/t1fk3KcWWmRfCRNQY+FZs="
+  api_key:
+    secure: "JirPqKaa5gixy4SffARpMmDEaGL02MzOY8mSfspIKexyaQdTaztwc2Xp6gUhxzVKQaDBIA3G33vJNe7czQpBCJLuE8V6xjSuJHtOv84kRiRh6m20W51Cwiz9OJom8Tn9D8OVLVyFmJfidloe8pz6UWvqG7ZGlY6AJIprUf7kZi83GhPAZmWE9i8dbM+bZiAfrZBI+0DiqTOblv02RAUjxGsbYndaT0K4xKpWsAjIL7QuUUiqhqAZogYArrxtlCAD4nr5xREkWGjYjFIV8QBTRH/xGM8GL0QGY5aZR8nyMBz7TrSyn0LgUB1NdpmjAl41O64HYbWSD9K/XJK6w5BFZ4MF00shSneRwZ5QtFkAMj4L7UpXjY+LXtGaYMuPmHIAntw5K+IAkWCXvZXwnX7/AWl3h7xWqoriawXFT/P4bXrLW8wsY6EL4pjYlag0p5QkHPWYnZhpcVmawHDMtCpi2Bs236tNZlPyenXX7YlkFyGDUkiDHxEsOzX+5OtW2NPetk1rez8/9rMzdDc/YD1x9XU1rqPBiqtddXSUaQarM9NINQOCNQI2uEfdG981j4igCK8aWlvaqlAZ7Gql21Quax1wQhWs9DnWRpP+461sdygX3hBI7t4Uf64GQprFXl2732h7B03xRnechJMl+9w4qEkxUQPbtoqArZHl0IRSy10="
+  on:
+    branch: master
+    node: 10
+    condition: $TRAVIS_OS_NAME = linux
+  skip_cleanup: true
+notifications:
+  email:
+    recipients:
+    - secure: "ZLEGnYL6GYBbb4NyU+zd2RCZdPUdoCUMwjtRQgVCGHsS79FVQpmKmIjMzQiVPSYw0l0QN6vsr8W1aLsaPPuD/vSyc4jr2tSFzi4Qyul2SDH4KAlYHFi1Gq98z1oKbD+wM4tkPm016Kfk3y8fBGVbLFXsFzaPlshmYUUpfs/bTXs8b8/JLEEunJ4lcfn358+3t1xyAPsmC728bRQ8OxXpRTk2ij0RGE62cv8vjJRXQWVcnIjE9IAAInsg1mI0XXutWcAk343ZCLXnJsnsz3yYK6XJuRoXoG80LpCmIPS0G20aYoBpcABje4FhKIwPMIcIPUPfYb0rUZLhFz43EjWaEXfu379eBrsX4h5TT3VdLVszXFLIk31RXoMezZaVb9+ImdfUrsK6e74HfkA1slqAv0z1L7G7M/8U0Z2VXsO8UYhFghHEsV84l8SHABRKEx3Iz2hWkHmCQKWaynBPOJROhw8gucar5iHOqeUlCcw532+6nSHBxrq2xLOQVicrjpWYGiAO8lW7lSqH4/07h60wg+6FLCet7lOATdqALUtUsUbHwwnRDOH+HdF4uQAzkQoc2eAzM8Wsc+/LQXwNw0qi2TP+jOeimxrKdp9dBWFk5eww3SHQd5zUKMBHjE++fDQixzJFYkwCcyKrogRRTEjoT/t1fk3KcWWmRfCRNQY+FZs="
+    on_success: change
+    on_failure: always
+after_deploy:
+- if [ ! $ENCRYPTION_LABEL ]; then travis_terminate 0; fi
+- eval `ssh-agent -s`
+- openssl aes-256-cbc -K `eval echo $\{${ENCRYPTION_LABEL}_key\}` -iv `eval echo $\{${ENCRYPTION_LABEL}_iv\}` -in .travis/deploy_key.enc -d | ssh-add -
+- gulp site
+- mkdir ../gh-pages
+- cp -rf ./gh-pages ../
+- cat package.json | json version
+- new_version=$(cat package.json | json version)
+- git reset --hard HEAD~
+- cat package.json | json version
+- old_version=$(cat package.json | json version)
+- git reset --hard ORIG_HEAD
+- node -e 'if (!require("semver").gte(process.argv[1], process.argv[2])) process.exit(1)' $new_version $old_version || travis_terminate 0
+- git fetch origin gh-pages:gh-pages
+- git checkout --orphan gh-pages
+- git checkout -m gh-pages
+- ls -a | grep -vE "^.git$|^\.+$" | xargs rm -rf
+- cp -rf ../gh-pages/* ./
+- find | grep -vE "^./.git(/|$)"
+- sed -i 's|\(baseurl:\s\+\)|\1//falsandtru.github.io|' _config.yml
+- git add -A
+- git commit -m "chore":" update web contents" --author "Travis-CI"
+- git push git@github.com:${TRAVIS_REPO_SLUG} gh-pages:gh-pages

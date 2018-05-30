@@ -1,0 +1,13 @@
+# Engine
+encoding: UTF-8
+markdown: kramdown
+kramdown:
+  input: GFM
+
+# Config
+baseurl: /pjax-api
+permalink: /:categories/:year/:month/:day/:title
+
+# Param
+basepath: /pjax-api/
+title: PJAX
